@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, BASE_DIR)
 sys.path.insert(1, os.path.join(BASE_DIR, 'apps'))
 
 SECRET_KEY = 'django-insecure-*r2+i*-_*dz*)_as710e^c$r#!z355z70h2_@%ckkqv&-^c#y9'
@@ -36,7 +37,7 @@ ROOT_URLCONF = 'lg_shop.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [BASE_DIR.parent / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -110,7 +111,7 @@ USE_TZ = False  # 关闭时区转换以后，django会默认使用TIME_ZONE作�
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static")
+    os.path.join(BASE_DIR.parent, "static")
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -157,3 +158,6 @@ LOGGING = {
         },
     }
 }
+
+AUTH_USER_MODEL = "users.UserInfo"
+
