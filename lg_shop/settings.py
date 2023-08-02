@@ -1,13 +1,13 @@
 import os
-
+import sys
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(1, os.path.join(BASE_DIR, 'apps'))
 
 SECRET_KEY = 'django-insecure-*r2+i*-_*dz*)_as710e^c$r#!z355z70h2_@%ckkqv&-^c#y9'
 
 DEBUG = True
-
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
@@ -17,6 +17,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    "users",
 ]
 
 MIDDLEWARE = [
@@ -57,6 +59,13 @@ DATABASES = {
         'POST': "3306",
         'USER': "lg_shop",
         'PASSWORD': "root123456",
+        'OPTIONS': {
+            'charset': 'utf8mb4',  # 连接选项配置,mysql8.0以上无需配置
+        },
+        'POOL_OPTIONS': {  # 连接池的配置信息
+            'POOL_SIZE': 10,  # 连接池默认创建的链接对象的数量
+            'MAX_OVERFLOW': 10  # 连接池默认创建的链接对象的最大数量
+        }
     }
 }
 CACHES = {
@@ -93,26 +102,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
+LANGUAGE_CODE = "zh-hans"
+TIME_ZONE = "Asia/Shanghai"
 USE_I18N = True
-
 USE_L10N = True
-
-USE_TZ = True
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
+USE_TZ = False  # 关闭时区转换以后，django会默认使用TIME_ZONE作为时区
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static")
 ]
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
