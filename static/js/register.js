@@ -32,6 +32,22 @@ let vm = new Vue({
                 this.error_username = true;
                 this.error_username_msg = "请输入5-20个字符的用户";
             }
+
+            if (this.error_username === false) {
+                let url = `/api/users/check/${this.username}/`;
+                axios.get(url, {
+                    responseType: "json"
+                }).then(response => {
+                    if (response.data.count === 0) {
+                        this.error_username = false;
+                        this.error_username_msg = "";
+                    } else {
+                        this.error_username = true;
+                        this.error_username_msg = "用户名已存在.";
+                    }
+                })
+            }
+
         },
         check_password() {
             let re = /^[0-9A-Za-z]{8,20}$/;
@@ -58,6 +74,21 @@ let vm = new Vue({
             } else {
                 this.error_mobile = true;
                 this.error_mobile_msg = "请输入正确的手机号码";
+            }
+
+            if (this.error_mobile === false) {
+                let url = `/api/users/mobile/${this.mobile}/`;
+                axios.get(url, {
+                    responseType: "json"
+                }).then(response => {
+                    if (response.data.count === 0) {
+                        this.error_mobile = false;
+                        this.error_mobile_msg = "";
+                    } else {
+                        this.error_mobile = true;
+                        this.error_mobile_msg = "手机号已注册.";
+                    }
+                })
             }
         },
         check_allow() {
