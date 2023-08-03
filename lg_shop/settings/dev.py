@@ -98,6 +98,13 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     },
+    "sms": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://:root123456@127.0.0.1:6379/3",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
 }
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
@@ -153,7 +160,7 @@ LOGGING = {
             'level': 'INFO',
             'filters': ['require_debug_true'],
             'class': 'logging.StreamHandler',
-            'formatter': 'simple'
+            'formatter': 'simple',
         },
         'file': {  # 向文件中输出日志
             'level': 'INFO',
@@ -161,7 +168,8 @@ LOGGING = {
             'filename': os.path.join(BASE_DIR, 'logs/lgshop.log'),  # 日志文件的位置
             'maxBytes': 300 * 1024 * 1024,
             'backupCount': 10,
-            'formatter': 'verbose'
+            'formatter': 'verbose',
+            "encoding": "utf-8",  # 解决日志输出中文乱码
         },
     },
     'loggers': {
@@ -174,3 +182,13 @@ LOGGING = {
 }
 
 AUTH_USER_MODEL = "users.UserInfo"
+
+# 容联云短信
+RONGLIANYUN = {
+    "accId": '2c94811c86c00e9b0186f2873a040afa',
+    "accToken": os.environ.get("RONGLIANYUNACCTOKEN"),
+    "appId": '2c94811c86c00e9b0186f2873b0d0b01',
+    "reg_tid": 1,  # 注册短信验证码的模板ID
+    "sms_expire": 60,  # 短信有效期，单位：秒(s)
+    "sms_interval": 60,  # 短信发送的冷却时间，单位：秒(s)
+}
