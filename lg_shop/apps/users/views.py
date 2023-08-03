@@ -16,6 +16,6 @@ class RegisterView(View):
         form_obj.cleaned_data.pop("confirm_password")
         try:
             UserInfo.objects.create_user(**form_obj.cleaned_data)
-            return render(request, "register.html", {"return_msg": "注册成功"})
+            return redirect(reverse("contents:index"))
         except Exception as e:
             return render(request, "register.html", {"return_msg": f"注册失败-{e}"})

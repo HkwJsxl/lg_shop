@@ -5,4 +5,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('api/users/', include(('users.urls', 'users'), namespace='users')),
+    path('api/contents/', include(('contents.urls', 'contents'), namespace='contents')),
 ]

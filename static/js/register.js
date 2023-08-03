@@ -61,11 +61,12 @@ let vm = new Vue({
             }
         },
         check_allow() {
-            if (this.error_allow !== true) {
+            if (this.error_allow === true) {
+                this.error_allow = false;
+                this.error_allow_msg = "";
+            } else {
                 this.error_allow = true;
                 this.error_allow_msg = "请勾选用户协议";
-            }else{
-                this.error_allow = false;
             }
         },
         on_submit() {
