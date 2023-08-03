@@ -8,6 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, BASE_DIR)
 sys.path.insert(1, os.path.join(BASE_DIR, 'apps'))
 sys.path.insert(1, os.path.join(BASE_DIR, 'extension'))
+sys.path.insert(1, os.path.join(BASE_DIR, 'libs'))
 
 SECRET_KEY = 'django-insecure-*r2+i*-_*dz*)_as710e^c$r#!z355z70h2_@%ckkqv&-^c#y9'
 
@@ -23,6 +24,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     "users",
+    "contents",
+    "verifications",
 ]
 
 MIDDLEWARE = [
@@ -75,14 +78,22 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/0",
+        "LOCATION": "redis://:root123456@127.0.0.1:6379/0",
+        # "LOCATION": "redis://:%s@%s:%s/2" % (REDIS_PASSWORD, REDIS_HOST, REDIS_PORT),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     },
     "session": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "redis://:root123456@127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "verifications": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://:root123456@127.0.0.1:6379/2",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
@@ -163,4 +174,3 @@ LOGGING = {
 }
 
 AUTH_USER_MODEL = "users.UserInfo"
-

@@ -23,15 +23,3 @@ class RegisterView(View):
             return redirect(reverse("contents:index"))
         except Exception as e:
             return render(request, "register.html", {"return_msg": f"注册失败-{e}"})
-
-
-class CheckUserView(View):
-    def get(self, request, username):
-        count = UserInfo.objects.filter(username=username).count()
-        return JsonResponse({"code": 0, "messages": "成功", "count": count})
-
-
-class CheckMobileView(View):
-    def get(self, request, mobile):
-        count = UserInfo.objects.filter(mobile=mobile).count()
-        return JsonResponse({"code": 0, "messages": "成功", "count": count})

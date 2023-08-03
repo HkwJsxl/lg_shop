@@ -8,6 +8,9 @@ let vm = new Vue({
         confirm_password: "",
         mobile: "",
         allow: "",
+        image_code_url: "",
+        image_code: "",
+        uuid: "",
 
         // v-show
         error_username: false,
@@ -15,6 +18,7 @@ let vm = new Vue({
         error_confirm_password: false,
         error_mobile: false,
         error_allow: false,
+        error_code: false,
 
         // error-message
         error_username_msg: "",
@@ -22,6 +26,7 @@ let vm = new Vue({
         error_confirm_password_msg: "",
         error_mobile_msg: "",
         error_allow_msg: "",
+        error_code_msg: "",
     },
     methods: {
         check_username() {
@@ -59,8 +64,7 @@ let vm = new Vue({
             }
         },
         check_confirm_password() {
-            let re = /^[0-9A-Za-z]{8,20}$/;
-            if (!re.test(this.confirm_password) || this.password != this.confirm_password) {
+            if (this.password !== this.confirm_password) {
                 this.error_confirm_password = true;
                 this.error_confirm_password_msg = "两次输入的密码不一致"
             } else {
@@ -100,16 +104,34 @@ let vm = new Vue({
                 this.error_allow_msg = "请勾选用户协议";
             }
         },
+        generate_verify_code() {
+            this.uuid = generateUUID();
+            this.image_code_url = `/api/verify/code/${this.uuid}/`;
+        },
+        check_image_code() {
+            if (this.image_code.length === 4) {
+                this.error_code = false;
+                this.error_code_msg = "";
+            } else {
+                this.error_code = true;
+                this.error_code_msg = "图形验证码长度为4";
+            }
+        },
         on_submit() {
             this.check_username();
             this.check_password();
             this.check_confirm_password();
             this.check_mobile();
             this.check_allow();
+            this.check_image_code();
             if (this.error_username === true || this.error_password === true || this.error_confirm_password === true || this.error_mobile === true || this.error_allow === true) {
                 // 禁止默认表单提交
                 window.event.returnValue = false;
             }
         },
+    },
+    // 页面加载之后执行的方法
+    mounted() {
+        this.generate_verify_code();
     }
 })
