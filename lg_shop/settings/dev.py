@@ -2,9 +2,12 @@ import os
 import sys
 from pathlib import Path
 
+from lg_shop.apps import users
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, BASE_DIR)
 sys.path.insert(1, os.path.join(BASE_DIR, 'apps'))
+sys.path.insert(1, os.path.join(BASE_DIR, 'extension'))
 
 SECRET_KEY = 'django-insecure-*r2+i*-_*dz*)_as710e^c$r#!z355z70h2_@%ckkqv&-^c#y9'
 
