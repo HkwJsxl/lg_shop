@@ -13,6 +13,7 @@ let vm = new Vue({
         uuid: "",
         sms_code: "",
         sms_code_tip: "获取短信验证码",
+        sms_flag: false,
 
         // v-show
         error_username: false,
@@ -43,7 +44,7 @@ let vm = new Vue({
             }
 
             if (this.error_username === false) {
-                let url = `/api/users/check/${this.username}/`;
+                let url = `/api/verify/check/${this.username}/`;
                 axios.get(url, {
                     responseType: "json"
                 }).then(response => {
@@ -131,27 +132,40 @@ let vm = new Vue({
             }
         },
         send_sms_code() {
+            if (this.sms_flag === true) {
+                return;
+            }
+            this.sms_flag = true;
             this.check_mobile();
             this.check_sms_code();
             let url = `/api/verify/sms/${this.mobile}/?uuid=${this.uuid}&image_code=${this.image_code}`;
             axios.get(url, {}).then(response => {
-                if (response.data.code === 0) {
+                if (response.data.code == 0) {
                     let num = 60;
                     let t = setInterval(() => {
                         if (num === 1) {
                             clearInterval(t);
                             this.sms_code_tip = `获取短信验证码`;
+                            this.generate_verify_code();
+                            this.sms_flag = false;
                         } else {
                             num -= 1;
                             this.sms_code_tip = `${num}秒`;
                         }
                     }, 1000)
                 } else {
-                    this.error_sms_code = true;
-                    this.error_sms_code_msg = response.data.msg;
+                    if (response.data.code == 4002) {
+                        this.error_sms_code = true;
+                        this.error_sms_code_msg = response.data.msg;
+                    } else {
+                        this.error_sms_code = true;
+                        this.error_sms_code_msg = response.data.msg;
+                        this.sms_flag = false;
+                    }
                 }
             }).catch(errors => {
                 console.log(errors);
+                this.sms_flag = false;
             })
         },
         on_submit() {
@@ -162,7 +176,7 @@ let vm = new Vue({
             this.check_allow();
             this.check_image_code();
             this.check_sms_code();
-            if (this.error_username === true || this.error_password === true || this.error_confirm_password === true || this.error_mobile === true || this.error_allow === true) {
+            if (this.error_username === true || this.error_password === true || this.error_confirm_password === true || this.error_mobile === true || this.error_allow === true || this.error_code === true || this.error_sms_code === true) {
                 // 禁止默认表单提交
                 window.event.returnValue = false;
             }
