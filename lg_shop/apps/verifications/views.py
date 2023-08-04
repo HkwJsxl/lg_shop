@@ -9,9 +9,9 @@ from django_redis import get_redis_connection
 
 from users.models import UserInfo
 from captcha import captcha
-from sms import sms_sington
 from response_code import RETCODE, err_msg
 from constants import SMS_CODE_EXPIRES, IMAGE_CODE_EXPIRES, SMS_FLAG_EXPIRES
+from celeryapp.sms.tasks import send_sms_code
 
 
 class CheckUserView(View):
@@ -60,11 +60,15 @@ class SMSCodeView(View):
         # 生成短信验证码
         sms_code = f"{random.randint(0, 9999):04d}"
         # 发送验证码
-        response = sms_sington.send_sms(tid=settings.RONGLIANYUN.get("reg_tid"), mobile=mobile,
-                                        datas=(sms_code, SMS_CODE_EXPIRES // 60))
-        if response.get("statusCode") == "000000":
+        response = send_sms_code.delay(tid=settings.RONGLIANYUN.get("reg_tid"), mobile=mobile,
+                                       datas=(sms_code, SMS_CODE_EXPIRES // 60))
+        if response:
+            # response返回的是任务id
             # 只有短信发送成功的时候才保存短信验证码
-            redis_conn.setex(f"sms_code_{mobile}", SMS_CODE_EXPIRES, sms_code)  # name time value
-            redis_conn.setex(f"sms_flag_{mobile}", SMS_FLAG_EXPIRES, 1)  # name time value
+            pipe = redis_conn.pipeline()
+            pipe.multi()  # 开启事务
+            pipe.setex(f"sms_code_{mobile}", SMS_CODE_EXPIRES, sms_code)  # name time value
+            pipe.setex(f"sms_flag_{mobile}", SMS_FLAG_EXPIRES, 1)
+            pipe.execute()  # 提交事务，同时把暂存在pipeline的数据一次性提交给redis
             return JsonResponse({"code": RETCODE.OK, "msg": err_msg.get(f"{RETCODE.OK}")})
         return JsonResponse({"code": RETCODE.SMSCODESENDRR, "msg": err_msg.get(f"{RETCODE.SMSCODESENDRR}")})
