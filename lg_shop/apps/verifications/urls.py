@@ -5,5 +5,5 @@ urlpatterns = [
     path("check/<str:username>/", views.CheckUserView.as_view()),
     path("mobile/<str:mobile>/", views.CheckMobileView.as_view()),
     re_path(r"^code/(?P<uuid>[\w-]+)/$", views.VerifyCodeView.as_view()),
-    path("sms/<str:mobile>/", views.SMSCodeView.as_view()),
+    re_path(r"^sms/(?P<mobile>1[3-9]\d{9})/$", views.SMSCodeView.as_view()),
 ]
