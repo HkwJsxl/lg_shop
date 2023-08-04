@@ -24,6 +24,11 @@ class RegisterForm(forms.Form):
         "min_length": "手机号格式为11位",
         "required": "手机号不能为空"
     })
+    sms_code = forms.CharField(max_length=4, min_length=4, required=True, label="短信验证码", error_messages={
+        "max_length": "短信验证码格式为4位",
+        "min_length": "短信验证码格式为4位",
+        "required": "短信验证码不能为空"
+    })
 
     def clean_username(self):
         username = self.cleaned_data.get('username')

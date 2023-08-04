@@ -11,7 +11,7 @@ from users.models import UserInfo
 from captcha import captcha
 from sms import sms_sington
 from response_code import RETCODE, err_msg
-from constants import SMS_CODE_EXPIRES, IMAGE_CODE_EXPIRES
+from constants import SMS_CODE_EXPIRES, IMAGE_CODE_EXPIRES, SMS_FLAG_EXPIRES
 
 
 class CheckUserView(View):
@@ -45,10 +45,14 @@ class SMSCodeView(View):
         image_code = request.GET.get("image_code")
         if not all([uuid, image_code]):
             return HttpResponseForbidden("参数校验失败.")
-        # 提取图形验证码
         redis_conn = get_redis_connection("verifications")
-        # 删除图形验证码
+        # 校验短信标识符，限制用户发送验证码频率
+        sms_flag_redis = redis_conn.get(f"sms_flag_{mobile}")
+        if sms_flag_redis:
+            return JsonResponse({"code": RETCODE.THROTTLINGERR, "msg": err_msg.get(f"{RETCODE.THROTTLINGERR}")})
+        # 提取图形验证码
         image_code_redis = redis_conn.get(f"img_{uuid}")  # 取出来是bytes类型
+        # 删除图形验证码
         redis_conn.delete(f"img_{uuid}")
         # 对比图形验证码
         if not image_code_redis or image_code_redis.decode().lower() != image_code.lower():
@@ -58,7 +62,9 @@ class SMSCodeView(View):
         # 发送验证码
         response = sms_sington.send_sms(tid=settings.RONGLIANYUN.get("reg_tid"), mobile=mobile,
                                         datas=(sms_code, SMS_CODE_EXPIRES // 60))
-        if response.get("code") == 0:
+        if response.get("statusCode") == "000000":
             # 只有短信发送成功的时候才保存短信验证码
             redis_conn.setex(f"sms_code_{mobile}", SMS_CODE_EXPIRES, sms_code)  # name time value
-        return response
+            redis_conn.setex(f"sms_flag_{mobile}", SMS_FLAG_EXPIRES, 1)  # name time value
+            return JsonResponse({"code": RETCODE.OK, "msg": err_msg.get(f"{RETCODE.OK}")})
+        return JsonResponse({"code": RETCODE.SMSCODESENDRR, "msg": err_msg.get(f"{RETCODE.SMSCODESENDRR}")})

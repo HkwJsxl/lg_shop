@@ -31,8 +31,7 @@ class SMSSington:
         sdk = self._instance.sms
         resp = sdk.sendMessage(tid, mobile, datas)
         response = json.loads(resp)
-        if response.get("statusCode") == "000000":
-            return JsonResponse({"code": 0, "messages": f"{mobile}验证码发送成功"})
-        msg = {"code": RETCODE.SMSCODESENDRR, "messages": f"{mobile}验证码发送失败-{response.get('statusMsg')}"}
-        log.error(msg)
-        return JsonResponse(msg)
+        if response.get("statusCode") != "000000":
+            msg = {"code": RETCODE.SMSCODESENDRR, "msg": f"{mobile}验证码发送失败-{response.get('statusMsg')}"}
+            log.error(msg)
+        return response

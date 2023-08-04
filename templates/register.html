@@ -53,15 +53,17 @@
                         </li>
                         <li>
                             <label>图形验证码:</label>
-                            <input type="text" name="image_code" id="pic_code" class="msg_input" v-model="image_code">
+                            <input type="text" name="image_code" id="pic_code" class="msg_input" v-model="image_code"
+                                   @blur="check_image_code">
                             <img v-bind:src="image_code_url" alt="图形验证码" class="pic_code" @click="generate_verify_code">
                             <span class="error_tip" v-show="error_code">[[ error_code_msg ]]</span>
                         </li>
                         <li>
                             <label>短信验证码:</label>
-                            <input type="text" name="sms_code" id="msg_code" class="msg_input">
-                            <a href="javascript:;" class="get_msg_code">获取短信验证码</a>
-                            <span class="error_tip">请填写短信验证码</span>
+                            <input type="text" name="sms_code" id="msg_code" class="msg_input" v-model="sms_code"
+                                   @blur="check_sms_code">
+                            <a href="javascript:;" class="get_msg_code" @click="send_sms_code">[[ sms_code_tip ]]</a>
+                            <span class="error_tip" v-show="error_sms_code">[[ error_sms_code_msg ]]</span>
                         </li>
                         <li class="agreement">
                             <input type="checkbox" name="allow" id="allow" v-model="allow" @change="check_allow">
