@@ -3,6 +3,7 @@ from django.views import View
 from django.contrib.auth import login, authenticate, logout
 from django.http import JsonResponse, HttpResponseForbidden
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django_redis import get_redis_connection
 
@@ -66,8 +67,13 @@ class LoginView(View):
             request.session.set_expiry(0)
         else:
             request.session.set_expiry(None)
+        # 跳转到未登录前的页面
+        next_url = request.GET.get("next")
+        if next_url:
+            response = redirect(next_url)
+        else:
+            response = redirect(reverse("contents:index"))
         # 迎合前端，首页获取cookie展示用户名
-        response = redirect(reverse("contents:index"))
         response.set_cookie("username", user.username, settings.SESSION_COOKIE_AGE)
         return response
 
@@ -82,8 +88,11 @@ class LogoutView(View):
         return response
 
 
-class UserInfoView(View):
-    """用户中心"""
+class UserInfoView(LoginRequiredMixin, View):
+    """
+    用户中心
+    LoginRequiredMixin: 校验是否登录，全局配置变量LOGIN_URL
+    """
 
     def get(self, request):
         return render(request, "user_center_info.html")

@@ -217,3 +217,6 @@ CELERY_ACCEPT_CONTENT = ['json', 'pickle']
 # CELERYD_TIME_LIMIT = 10 * 60
 # 任务发出后，经过一段时间还未收到acknowledge, 就将任务重新交给其他worker执行
 CELERY_DISABLE_RATE_LIMITS = True
+
+
+LOGIN_URL = "/api/users/login/"
