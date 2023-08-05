@@ -175,6 +175,7 @@ LOGGING = {
 }
 
 AUTH_USER_MODEL = "users.UserInfo"
+AUTHENTICATION_BACKENDS = ['extension.authenticate.ReModelBackend']
 
 # 容联云短信
 RONGLIANYUN = {

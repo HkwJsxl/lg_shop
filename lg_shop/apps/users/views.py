@@ -1,7 +1,8 @@
 from django.shortcuts import render, HttpResponse, redirect, reverse
 from django.views import View
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.http import JsonResponse, HttpResponseForbidden
+from django.conf import settings
 
 from django_redis import get_redis_connection
 
@@ -55,8 +56,34 @@ class LoginView(View):
             return render(request, "login.html", {"return_msg": "数据校验失败."})
         username = form_obj.cleaned_data.get("username")
         password = form_obj.cleaned_data.get("password")
+        remembered = form_obj.cleaned_data.get("remembered")
         user = authenticate(username=username, password=password)
         if not user:
             return render(request, "login.html", {"return_msg": "用户名或密码错误."})
         login(request, user)
-        return redirect(reverse("contents:index"))
+        # 设置失效时间
+        if not remembered:
+            request.session.set_expiry(0)
+        else:
+            request.session.set_expiry(None)
+        # 迎合前端，首页获取cookie展示用户名
+        response = redirect(reverse("contents:index"))
+        response.set_cookie("username", user.username, settings.SESSION_COOKIE_AGE)
+        return response
+
+
+class LogoutView(View):
+    """退出登录"""
+
+    def get(self, request):
+        logout(request)
+        response = redirect(reverse("users:login"))
+        response.delete_cookie("username")
+        return response
+
+
+class UserInfoView(View):
+    """用户中心"""
+
+    def get(self, request):
+        return render(request, "user_center_info.html")
