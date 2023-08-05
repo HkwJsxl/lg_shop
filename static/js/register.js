@@ -20,7 +20,7 @@ let vm = new Vue({
         error_password: false,
         error_confirm_password: false,
         error_mobile: false,
-        error_allow: false,
+        error_allow: true,
         error_code: false,
         error_sms_code: false,
 
@@ -29,7 +29,7 @@ let vm = new Vue({
         error_password_msg: "",
         error_confirm_password_msg: "",
         error_mobile_msg: "",
-        error_allow_msg: "",
+        error_allow_msg: "请勾选用户协议",
         error_code_msg: "",
         error_sms_code_msg: "",
     },
@@ -101,7 +101,8 @@ let vm = new Vue({
             }
         },
         check_allow() {
-            if (this.error_allow === true) {
+            console.log(this.allow)
+            if (this.allow === true) {
                 this.error_allow = false;
                 this.error_allow_msg = "";
             } else {
