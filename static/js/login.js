@@ -36,7 +36,7 @@ let vm = new Vue({
 
             if (this.error_username == true || this.error_password == true) {
                 // 不满足登录条件：禁用表单
-				window.event.returnValue = false
+				window.event.returnValue = false;
             }
         },
         // qq登录

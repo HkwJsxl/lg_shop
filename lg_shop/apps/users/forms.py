@@ -45,3 +45,17 @@ class RegisterForm(forms.Form):
         if password != confirm_password:
             self.add_error("password", "两次密码输入不同.")
         return self.cleaned_data
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=20, min_length=5, required=True, label="用户名", error_messages={
+        "max_length": "用户名最大长度为20",
+        "min_length": "用户名最小长度为5",
+        "required": "用户名不能为空"
+    })
+    password = forms.CharField(max_length=20, min_length=8, required=True, label="密码", error_messages={
+        "max_length": "密码最大长度为20",
+        "min_length": "密码最小长度为8",
+        "required": "密码不能为空"
+    })
+    remembered = forms.BooleanField(required=False)

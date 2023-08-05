@@ -1,16 +1,18 @@
 from django.shortcuts import render, HttpResponse, redirect, reverse
 from django.views import View
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from django.http import JsonResponse, HttpResponseForbidden
 
 from django_redis import get_redis_connection
 
-from .forms import RegisterForm
+from .forms import RegisterForm, LoginForm
 from .models import UserInfo
 from response_code import RETCODE, err_msg
 
 
 class RegisterView(View):
+    """注册视图"""
+
     def get(self, request, *args, **kwargs):
         return render(request, "register.html")
 
@@ -39,3 +41,22 @@ class RegisterView(View):
             return redirect(reverse("contents:index"))
         except Exception as e:
             return render(request, "register.html", {"return_msg": f"注册失败-{e}"})
+
+
+class LoginView(View):
+    """登录视图"""
+
+    def get(self, request):
+        return render(request, "login.html")
+
+    def post(self, request):
+        form_obj = LoginForm(request.POST)
+        if not form_obj.is_valid():
+            return render(request, "login.html", {"return_msg": "数据校验失败."})
+        username = form_obj.cleaned_data.get("username")
+        password = form_obj.cleaned_data.get("password")
+        user = authenticate(username=username, password=password)
+        if not user:
+            return render(request, "login.html", {"return_msg": "用户名或密码错误."})
+        login(request, user)
+        return redirect(reverse("contents:index"))
