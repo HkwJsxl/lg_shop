@@ -11,7 +11,8 @@ from users.models import UserInfo
 from captcha import captcha
 from response_code import RETCODE, err_msg
 from constants import SMS_CODE_EXPIRES, IMAGE_CODE_EXPIRES, SMS_FLAG_EXPIRES
-from celeryapp.sms.tasks import send_sms_code
+# from celeryapp.sms.tasks import send_sms_code
+from verifications.tasks import send_sms_code
 
 
 class CheckUserView(View):
