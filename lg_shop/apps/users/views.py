@@ -102,3 +102,10 @@ class UserInfoView(LoginRequiredMixin, View):
             "email_actived": request.user.email_actived,
         }
         return render(request, "user_center_info.html", contents)
+
+
+class AddressView(LoginRequiredMixin, View):
+    """收货地址"""
+
+    def get(self, request):
+        return render(request, "user_center_site.html")
