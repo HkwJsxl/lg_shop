@@ -218,5 +218,15 @@ CELERY_ACCEPT_CONTENT = ['json', 'pickle']
 # 任务发出后，经过一段时间还未收到acknowledge, 就将任务重新交给其他worker执行
 CELERY_DISABLE_RATE_LIMITS = True
 
-
 LOGIN_URL = "/api/users/login/"
+
+# 邮箱配置
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # 指定邮件后端
+EMAIL_HOST = 'smtp.163.com'  # 发邮件主机
+EMAIL_PORT = 25  # 发邮件端口
+EMAIL_HOST_USER = 'hankewei0224@163.com'  # 授权的邮箱
+EMAIL_HOST_PASSWORD = 'NDRUDJHCSOJQQYPY'  # 邮箱授权时获得的密码，非注册登录密码
+EMAIL_FROM = 'lgShop-<hankewei0224@163.com>'  # 发件人抬头
+
+# 邮箱激活链接
+EMAIL_VERIFY_URL = 'http://localhost:8000/verify/email/verification/'

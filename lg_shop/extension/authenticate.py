@@ -1,8 +1,11 @@
 import re
 
 from django.contrib.auth.backends import ModelBackend
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 
 from users.models import UserInfo
+from response_code import RETCODE, err_msg
 
 
 class ReModelBackend(ModelBackend):
@@ -32,3 +35,8 @@ class ReModelBackend(ModelBackend):
             return None
         else:
             return user
+
+
+class LoginRequiredJSONMixin(LoginRequiredMixin):
+    def handle_no_permission(self):
+        return JsonResponse({"code": RETCODE.SESSIONERR, "msg": err_msg.get(f"{RETCODE.SESSIONERR}")})

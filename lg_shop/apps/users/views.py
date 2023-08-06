@@ -95,4 +95,10 @@ class UserInfoView(LoginRequiredMixin, View):
     """
 
     def get(self, request):
-        return render(request, "user_center_info.html")
+        contents = {
+            "username": request.user.username,
+            "mobile": request.user.mobile,
+            "email": request.user.email,
+            "email_actived": request.user.email_actived,
+        }
+        return render(request, "user_center_info.html", contents)
