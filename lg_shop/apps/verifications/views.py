@@ -6,7 +6,6 @@ from django.shortcuts import render, HttpResponse
 from django.views import View
 from django.http import JsonResponse, HttpResponseForbidden
 from django.conf import settings
-from django.core.mail import send_mail
 
 from django_redis import get_redis_connection
 
@@ -15,7 +14,7 @@ from captcha import captcha
 from response_code import RETCODE, err_msg
 from constants import SMS_CODE_EXPIRES, IMAGE_CODE_EXPIRES, SMS_FLAG_EXPIRES
 # from celeryapp.sms.tasks import send_sms_code
-from verifications.tasks import send_sms_code
+from verifications.tasks import send_sms_code, send_email_verify
 from authenticate import LoginRequiredJSONMixin
 
 
@@ -90,12 +89,10 @@ class EmailView(LoginRequiredJSONMixin, View):
         # 校验邮箱格式
         if not re.match(r"^[a-z0-9][\w\.\-]*@[a-z0-9\-]+(\.[a-z]{2,5}){1,2}$", email):
             return HttpResponseForbidden("邮箱格式错误.")
-        # 发送邮箱
-        subject = "lg商城邮箱验证"
-        html_message = "<p>尊敬的用户您好，感谢您使用商城。</p>" \
-                       "<p>您的邮箱为：%s，请点击链接激活您的邮箱：</p>" \
-                       "<p><a href='%s'>%s<a></p>" % (email, "www.baidu.com", "www.baidu.com")
-        send_mail(subject, "", from_email=settings.EMAIL_FROM, recipient_list=[email], html_message=html_message)
+        # 发送邮箱(异步)
+        response = send_email_verify.delay(email)
+        if not response:
+            return JsonResponse({"code": RETCODE.DBERR, "msg": "邮箱发送失败-celery未执行任务."})
         # 保存数据
         try:
             request.user.email = email
