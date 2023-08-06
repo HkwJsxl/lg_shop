@@ -2,7 +2,7 @@ import random
 import json
 import re
 
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, redirect, reverse
 from django.views import View
 from django.http import JsonResponse, HttpResponseForbidden
 from django.conf import settings
@@ -16,6 +16,7 @@ from constants import SMS_CODE_EXPIRES, IMAGE_CODE_EXPIRES, SMS_FLAG_EXPIRES
 # from celeryapp.sms.tasks import send_sms_code
 from verifications.tasks import send_sms_code, send_email_verify
 from authenticate import LoginRequiredJSONMixin
+from authlib_jwt import validate_token
 
 
 class CheckUserView(View):
@@ -90,9 +91,7 @@ class EmailView(LoginRequiredJSONMixin, View):
         if not re.match(r"^[a-z0-9][\w\.\-]*@[a-z0-9\-]+(\.[a-z]{2,5}){1,2}$", email):
             return HttpResponseForbidden("邮箱格式错误.")
         # 发送邮箱(异步)
-        response = send_email_verify.delay(email)
-        if not response:
-            return JsonResponse({"code": RETCODE.DBERR, "msg": "邮箱发送失败-celery未执行任务."})
+        send_email_verify.delay(email, request.user.id)
         # 保存数据
         try:
             request.user.email = email
@@ -101,3 +100,24 @@ class EmailView(LoginRequiredJSONMixin, View):
             return JsonResponse({"code": RETCODE.DBERR, "msg": "邮箱保存失败."})
         # 返回数据
         return JsonResponse({"code": RETCODE.OK, "msg": err_msg.get(f"{RETCODE.OK}")})
+
+
+class EmailVerifyView(View):
+    """邮箱激活链接校验"""
+
+    def get(self, request):
+        # 获取数据
+        token = request.GET.get("token")
+        if not token:
+            return HttpResponseForbidden("缺少参数token.")
+        # 解密
+        user = validate_token(token)
+        if not user:
+            return JsonResponse({"code": RETCODE.DBERR, "msg": "参数校验失败."})
+        # 查看邮箱激活状态
+        if user.email_actived:
+            return JsonResponse({"code": RETCODE.DBERR, "msg": "邮箱已激活，请勿重复操作."})
+        # 设置邮箱已激活
+        user.email_actived = True
+        user.save(update_fields=["email_actived"])
+        return JsonResponse({"code": RETCODE.OK, "msg": "成功."})

@@ -227,6 +227,7 @@ EMAIL_PORT = 25  # 发邮件端口
 EMAIL_HOST_USER = 'hankewei0224@163.com'  # 授权的邮箱
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")  # 邮箱授权时获得的密码，非注册登录密码
 EMAIL_FROM = 'lgShop-<hankewei0224@163.com>'  # 发件人抬头
-
 # 邮箱激活链接
-EMAIL_VERIFY_URL = 'http://localhost:8000/verify/email/verification/'
+EMAIL_VERIFY_URL = "http://127.0.0.1:8000/api/verify/email/verification/"
+# 邮箱验证失效时间：秒
+EMAIL_VERIFY_TOKEN_EXPIRES = 60 * 30

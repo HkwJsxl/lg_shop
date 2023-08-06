@@ -3,9 +3,13 @@ import re
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
+from django.conf import settings
+
+from authlib.jose import jwt, JoseError
 
 from users.models import UserInfo
 from response_code import RETCODE, err_msg
+from authlib_jwt import generate_token
 
 
 class ReModelBackend(ModelBackend):
@@ -40,3 +44,11 @@ class ReModelBackend(ModelBackend):
 class LoginRequiredJSONMixin(LoginRequiredMixin):
     def handle_no_permission(self):
         return JsonResponse({"code": RETCODE.SESSIONERR, "msg": err_msg.get(f"{RETCODE.SESSIONERR}")})
+
+
+def generate_email_verify(email, user_id):
+    """生成邮箱验证链接"""
+    token = generate_token(user_id, email)
+    # 生成链接
+    email_verify_url = "%s?token=%s" % (settings.EMAIL_VERIFY_URL, token.decode())
+    return email_verify_url
