@@ -205,7 +205,7 @@ let vm = new Vue({
                             } else if (response.data.code == '4101') {
                                 location.href = '/login/?next=/addresses/';
                             } else {
-                                alert(response.data.errmsg);
+                                alert(response.data.msg);
                             }
                         })
                         .catch(error => {
@@ -227,7 +227,7 @@ let vm = new Vue({
                             } else if (response.data.code == '4101') {
                                 location.href = '/login/?next=/addresses/';
                             } else {
-                                alert(response.data.errmsg);
+                                alert(response.data.msg);
                             }
                         })
                         .catch(error => {
@@ -252,7 +252,7 @@ let vm = new Vue({
                     } else if (response.data.code == '4101') {
                         location.href = '/login/?next=/addresses/';
                     }else {
-                        alert(response.data.errmsg);
+                        alert(response.data.msg);
                     }
                 })
                 .catch(error => {
@@ -275,7 +275,7 @@ let vm = new Vue({
                     } else if (response.data.code == '4101') {
                         location.href = '/login/?next=/addresses/';
                     } else {
-                        alert(response.data.errmsg);
+                        alert(response.data.msg);
                     }
                 })
                 .catch(error => {
@@ -313,7 +313,7 @@ let vm = new Vue({
                         } else if (response.data.code == '4101') {
                             location.href = '/login/?next=/addresses/';
                         } else {
-                            alert(response.data.errmsg);
+                            alert(response.data.msg);
                         }
                     })
                     .catch(error => {

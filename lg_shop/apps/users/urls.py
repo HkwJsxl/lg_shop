@@ -10,4 +10,6 @@ urlpatterns = [
     # 收货地址
     path("addresses/", views.AddressView.as_view(), name="address"),
     path("addresses/create/", views.AddressCreateView.as_view(), name="address_create"),
+    path("addresses/<str:update_id>/", views.AddressUpdateView.as_view(), name="address_update"),
+    path("addresses/<str:default_id>/default/", views.AddressDefaultView.as_view(), name="address_default"),
 ]
