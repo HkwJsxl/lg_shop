@@ -15,6 +15,7 @@ from .models import UserInfo, Address
 from response_code import RETCODE, err_msg
 from authenticate import LoginRequiredJSONMixin
 from constants import USER_ADDRESS_COUNT
+from logger import log
 
 
 class RegisterView(View):
@@ -179,7 +180,8 @@ class AddressCreateView(LoginRequiredJSONMixin, View):
             if not request.user.default_address:
                 request.user.default_address = address
                 request.user.save()
-        except:
+        except Exception as e:
+            log.error(str(Exception))
             return JsonResponse({"code": RETCODE.DBERR, "msg": "数据创建失败."})
         # 返回数据
         address_dict = {
@@ -198,7 +200,7 @@ class AddressCreateView(LoginRequiredJSONMixin, View):
 class AddressUpdateView(LoginRequiredJSONMixin, View):
     """修改地址"""
 
-    def put(self, request, update_id):
+    def put(self, request, address_pk):
         # 获取数据
         data = request.body.decode()
         data = json.loads(data)
@@ -213,15 +215,16 @@ class AddressUpdateView(LoginRequiredJSONMixin, View):
         # 更新数据
         try:
             # 返回的是受影响的条数
-            Address.objects.filter(pk=update_id).update(
+            Address.objects.filter(pk=address_pk).update(
                 receiver=receiver, province_id=province_id, city_id=city_id, district_id=district_id,
                 place=place, tel=tel, mobile=mobile, email=email
             )
-        except:
+        except Exception as e:
+            log.error(str(Exception))
             return JsonResponse({"code": RETCODE.DBERR, "msg": "数据更新错误."})
         else:
             # 返回数据
-            address = Address.objects.get(pk=update_id)
+            address = Address.objects.get(pk=address_pk)
             address_dict = {
                 "id": address.pk,
                 "receiver": address.receiver,
@@ -235,13 +238,23 @@ class AddressUpdateView(LoginRequiredJSONMixin, View):
             }
             return JsonResponse({"code": RETCODE.OK, "msg": "成功", "address": address_dict})
 
+    def delete(self, request, address_pk):
+        try:
+            Address.objects.filter(pk=address_pk).update(is_deleted=True)
+        except Exception as e:
+            log.error(str(e))
+            return JsonResponse({"code": RETCODE.DBERR, "msg": "数据删除错误."})
+        else:
+            return JsonResponse({"code": RETCODE.OK, "msg": "成功"})
+
 
 class AddressDefaultView(LoginRequiredJSONMixin, View):
     def put(self, request, default_id):
         try:
             request.user.default_address_id = default_id
             request.user.save()
-        except Exception:
+        except Exception as e:
+            log.error(str(Exception))
             return JsonResponse({"code": RETCODE.DBERR, "msg": "数据更新错误."})
         else:
             return JsonResponse({"code": RETCODE.OK, "msg": "成功"})
