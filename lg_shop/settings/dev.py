@@ -15,6 +15,11 @@ SECRET_KEY = 'django-insecure-*r2+i*-_*dz*)_as710e^c$r#!z355z70h2_@%ckkqv&-^c#y9
 DEBUG = True
 ALLOWED_HOSTS = []
 
+# redis相关
+REDIS_PASSWORD = "root123456"
+REDIS_HOST = "127.0.0.1"
+REDIS_PORT = 6379
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -79,22 +84,28 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://:root123456@127.0.0.1:6379/0",
-        # "LOCATION": "redis://:%s@%s:%s/2" % (REDIS_PASSWORD, REDIS_HOST, REDIS_PORT),
+        "LOCATION": "redis://:%s@%s:%s/0" % (REDIS_PASSWORD, REDIS_HOST, REDIS_PORT),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     },
     "session": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://:root123456@127.0.0.1:6379/1",
+        "LOCATION": "redis://:%s@%s:%s/1" % (REDIS_PASSWORD, REDIS_HOST, REDIS_PORT),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     },
     "verifications": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://:root123456@127.0.0.1:6379/2",
+        "LOCATION": "redis://:%s@%s:%s/2" % (REDIS_PASSWORD, REDIS_HOST, REDIS_PORT),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "areas": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://:%s@%s:%s/3" % (REDIS_PASSWORD, REDIS_HOST, REDIS_PORT),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
@@ -187,10 +198,6 @@ RONGLIANYUN = {
     "sms_expire": 60,  # 短信有效期，单位：秒(s)
     "sms_interval": 60,  # 短信发送的冷却时间，单位：秒(s)
 }
-# redis相关
-REDIS_PASSWORD = "root123456"
-REDIS_HOST = "127.0.0.1"
-REDIS_PORT = 6379
 
 # celery相关
 # Celery异步任务队列框架的配置项[注意：django的配置项必须大写，所以这里的所有配置项必须全部大写]

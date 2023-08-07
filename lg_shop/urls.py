@@ -7,4 +7,5 @@ urlpatterns = [
     path('api/users/', include(('users.urls', 'users'), namespace='users')),
     path('api/contents/', include(('contents.urls', 'contents'), namespace='contents')),
     path('api/verify/', include(('verifications.urls', 'verifications'), namespace='verify')),
+    path('api/areas/', include(('areas.urls', 'areas'), namespace='areas')),
 ]

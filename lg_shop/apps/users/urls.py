@@ -8,5 +8,5 @@ urlpatterns = [
     # 个人中心
     path("info/", views.UserInfoView.as_view(), name="info"),
     # 收货地址
-    path("address/", views.AddressView.as_view(), name="address"),
+    path("addresses/", views.AddressView.as_view(), name="address"),
 ]

@@ -38,12 +38,13 @@ let vm = new Vue({
         // 监听到省份id变化
         'form_address.province_id': function(){
             if (this.form_address.province_id) {
-                let url = '/areas/?area_id=' + this.form_address.province_id;
+                let url = '/api/areas/?area_id=' + this.form_address.province_id;
                 axios.get(url, {
                     responseType: 'json'
                 })
                     .then(response => {
                         if (response.data.code == '0') {
+                            console.log(response.data.sub_data)
                             this.cities = response.data.sub_data.subs;
                         } else {
                             console.log(response.data);
@@ -59,7 +60,7 @@ let vm = new Vue({
         // 监听到城市id变化
         'form_address.city_id': function(){
             if (this.form_address.city_id){
-                let url = '/areas/?area_id='+ this.form_address.city_id;
+                let url = '/api/areas/?area_id='+ this.form_address.city_id;
                 axios.get(url, {
                     responseType: 'json'
                 })
@@ -164,7 +165,7 @@ let vm = new Vue({
         },
         // 获取省份数据
         get_provinces(){
-            let url = '/areas/';
+            let url = '/api/areas/';
             axios.get(url, {
                 responseType: 'json'
             })
@@ -189,7 +190,7 @@ let vm = new Vue({
                 // 注意：0 == '';返回true; 0 === '';返回false;
                 if (this.editing_address_index === '') {
                     // 新增地址
-                    let url = '/addresses/create/';
+                    let url = '/api/addresses/create/';
                     axios.post(url, this.form_address, {
                         headers: {
                             'X-CSRFToken':getCookie('csrftoken')
@@ -212,7 +213,7 @@ let vm = new Vue({
                         })
                 } else {
                     // 修改地址
-                    let url = '/addresses/' + this.addresses[this.editing_address_index].id + '/';
+                    let url = '/api/users/addresses/' + this.addresses[this.editing_address_index].id + '/';
                     axios.put(url, this.form_address, {
                         headers: {
                             'X-CSRFToken':getCookie('csrftoken')
@@ -237,7 +238,7 @@ let vm = new Vue({
         },
         // 删除地址
         delete_address(index){
-            let url = '/addresses/' + this.addresses[index].id + '/';
+            let url = '/api/users/addresses/' + this.addresses[index].id + '/';
             axios.delete(url, {
                 headers: {
                     'X-CSRFToken':getCookie('csrftoken')
@@ -260,7 +261,7 @@ let vm = new Vue({
         },
         // 设置默认地址
         set_default(index){
-            let url = '/addresses/' + this.addresses[index].id + '/default/';
+            let url = '/api/users/addresses/' + this.addresses[index].id + '/default/';
             axios.put(url, {}, {
                 headers: {
                     'X-CSRFToken':getCookie('csrftoken')
@@ -295,7 +296,7 @@ let vm = new Vue({
             if (!this.new_title) {
                 alert("请填写标题后再保存！");
             } else {
-                let url = '/addresses/' + this.addresses[index].id + '/title/';
+                let url = '/api/users/addresses/' + this.addresses[index].id + '/title/';
                 axios.put(url, {
                     title: this.new_title
                 }, {
