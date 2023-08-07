@@ -197,7 +197,7 @@ class AddressCreateView(LoginRequiredJSONMixin, View):
         return JsonResponse({"code": RETCODE.OK, "msg": "成功", "address": address_dict})
 
 
-class AddressUpdateView(LoginRequiredJSONMixin, View):
+class AddressUpdateDestoryView(LoginRequiredJSONMixin, View):
     """修改地址"""
 
     def put(self, request, address_pk):
@@ -215,7 +215,7 @@ class AddressUpdateView(LoginRequiredJSONMixin, View):
         # 更新数据
         try:
             # 返回的是受影响的条数
-            Address.objects.filter(pk=address_pk).update(
+            Address.objects.filter(pk=address_pk,user=request.user).update(
                 receiver=receiver, province_id=province_id, city_id=city_id, district_id=district_id,
                 place=place, tel=tel, mobile=mobile, email=email
             )
@@ -224,7 +224,7 @@ class AddressUpdateView(LoginRequiredJSONMixin, View):
             return JsonResponse({"code": RETCODE.DBERR, "msg": "数据更新错误."})
         else:
             # 返回数据
-            address = Address.objects.get(pk=address_pk)
+            address = Address.objects.get(pk=address_pk, user=request.user)
             address_dict = {
                 "id": address.pk,
                 "receiver": address.receiver,
@@ -240,7 +240,7 @@ class AddressUpdateView(LoginRequiredJSONMixin, View):
 
     def delete(self, request, address_pk):
         try:
-            Address.objects.filter(pk=address_pk).update(is_deleted=True)
+            Address.objects.filter(pk=address_pk, user=request.user).update(is_deleted=True)
         except Exception as e:
             log.error(str(e))
             return JsonResponse({"code": RETCODE.DBERR, "msg": "数据删除错误."})
@@ -251,7 +251,8 @@ class AddressUpdateView(LoginRequiredJSONMixin, View):
 class AddressDefaultView(LoginRequiredJSONMixin, View):
     def put(self, request, default_id):
         try:
-            request.user.default_address_id = default_id
+            address = Address.objects.get(pk=default_id, user=request.user)
+            request.user.default_address = address
             request.user.save()
         except Exception as e:
             log.error(str(Exception))

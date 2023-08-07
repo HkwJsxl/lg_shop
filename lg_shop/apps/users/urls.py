@@ -12,7 +12,7 @@ urlpatterns = [
     # 创建地址
     path("addresses/create/", views.AddressCreateView.as_view(), name="address_create"),
     # 修改，删除
-    path("addresses/<str:address_pk>/", views.AddressUpdateView.as_view(), name="address_update"),
+    path("addresses/<str:address_pk>/", views.AddressUpdateDestoryView.as_view(), name="address_update"),
     # 修改默认收获地址
     path("addresses/<str:default_id>/default/", views.AddressDefaultView.as_view(), name="address_default"),
 ]

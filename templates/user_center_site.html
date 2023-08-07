@@ -72,7 +72,7 @@
             </div>
             <div class="site_con" v-for="(address, index) in addresses">
                 <div class="site_title">
-                    <h3>[[ address.title ]]</h3>
+                    <h3>[[ address.receiver ]]</h3>
                     <a class="edit_icon" @click="show_edit_title(index)"></a>
                     <em v-if="address.id===default_address_id">默认地址</em>
                     <span class="del_site" @click="delete_address(index)">×</span>
