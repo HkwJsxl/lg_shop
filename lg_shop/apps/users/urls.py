@@ -9,4 +9,5 @@ urlpatterns = [
     path("info/", views.UserInfoView.as_view(), name="info"),
     # 收货地址
     path("addresses/", views.AddressView.as_view(), name="address"),
+    path("addresses/create/", views.AddressCreateView.as_view(), name="address_create"),
 ]

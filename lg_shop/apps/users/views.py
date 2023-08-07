@@ -1,3 +1,6 @@
+import re
+import json
+
 from django.shortcuts import render, HttpResponse, redirect, reverse
 from django.views import View
 from django.contrib.auth import login, authenticate, logout
@@ -8,8 +11,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django_redis import get_redis_connection
 
 from .forms import RegisterForm, LoginForm
-from .models import UserInfo
+from .models import UserInfo, Address
 from response_code import RETCODE, err_msg
+from authenticate import LoginRequiredJSONMixin
 
 
 class RegisterView(View):
@@ -109,3 +113,52 @@ class AddressView(LoginRequiredMixin, View):
 
     def get(self, request):
         return render(request, "user_center_site.html")
+
+
+class AddressCreateView(LoginRequiredJSONMixin, View):
+    """新增地址"""
+
+    def post(self, request):
+        # 获取数据
+        data = request.body.decode()
+        data = json.loads(data)
+        receiver = data.get('receiver')
+        province_id = data.get('province_id')
+        city_id = data.get('city_id')
+        district_id = data.get('district_id')
+        place = data.get('place')
+        mobile = data.get('mobile')
+        tel = data.get('tel')
+        email = data.get('email')
+        # 校验参数
+        if not all([receiver, province_id, city_id, district_id, place, mobile]):
+            return HttpResponseForbidden('缺少必传参数')
+        if not re.match(r'^1[3-9]\d{9}$', mobile):
+            return HttpResponseForbidden('参数mobile有误')
+        if tel:
+            if not re.match(r'^(0[0-9]{2,3}-)?([2-9][0-9]{6,7})+(-[0-9]{1,4})?$', tel):
+                return HttpResponseForbidden('参数tel有误')
+        if email:
+            if not re.match(r'^[a-z0-9][\w\.\-]*@[a-z0-9\-]+(\.[a-z]{2,5}){1,2}$', email):
+                return HttpResponseForbidden('参数email有误')
+        # 保存数据
+        try:
+            Address.objects.create(
+                user=request.user,
+                receiver=receiver, province_id=province_id, city_id=city_id, district_id=district_id,
+                place=place, tel=tel, mobile=mobile, email=email
+            )
+        except:
+            return JsonResponse({"code": RETCODE.DBERR, "msg": "数据创建失败."})
+        # 返回数据
+        address_dict = {
+            "receiver": receiver,
+            "province_id": province_id,
+            "city_id": city_id,
+            "district_id": district_id,
+            "place": place,
+            "tel": tel,
+            "mobile": mobile,
+            "email": email,
+        }
+        return JsonResponse({"code": RETCODE.OK, "msg": "成功", "address": address_dict})
