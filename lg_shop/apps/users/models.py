@@ -9,6 +9,9 @@ class UserInfo(AbstractUser):
     is_deleted = models.BooleanField(default=False, verbose_name="是否删除")
     email_actived = models.BooleanField(default=False, verbose_name="邮箱验证")
 
+    default_address = models.ForeignKey("Address", related_name="users", null=True, blank=True,
+                                        on_delete=models.SET_NULL, verbose_name="默认地址")
+
     class Meta:
         db_table = "lg_userinfo"
         verbose_name = "账户"
