@@ -215,7 +215,7 @@ class AddressUpdateDestoryView(LoginRequiredJSONMixin, View):
         # 更新数据
         try:
             # 返回的是受影响的条数
-            Address.objects.filter(pk=address_pk,user=request.user).update(
+            Address.objects.filter(pk=address_pk, user=request.user).update(
                 receiver=receiver, province_id=province_id, city_id=city_id, district_id=district_id,
                 place=place, tel=tel, mobile=mobile, email=email
             )
@@ -249,6 +249,8 @@ class AddressUpdateDestoryView(LoginRequiredJSONMixin, View):
 
 
 class AddressDefaultView(LoginRequiredJSONMixin, View):
+    """设置用户默认收货地址"""
+
     def put(self, request, default_id):
         try:
             address = Address.objects.get(pk=default_id, user=request.user)
@@ -259,3 +261,46 @@ class AddressDefaultView(LoginRequiredJSONMixin, View):
             return JsonResponse({"code": RETCODE.DBERR, "msg": "数据更新错误."})
         else:
             return JsonResponse({"code": RETCODE.OK, "msg": "成功"})
+
+
+class ChangePasswordView(LoginRequiredMixin, View):
+    """修改密码"""
+
+    def get(self, request):
+        return render(request, "user_center_pass.html")
+
+    def post(self, request):
+        # 获取数据
+        old_password = request.POST.get("old_password")
+        new_password = request.POST.get("new_password")
+        confirm_new_password = request.POST.get("new_password2")
+        # 校验数据
+        if not all([old_password, new_password, confirm_new_password]):
+            return HttpResponseForbidden("参数不全.")
+        if new_password != confirm_new_password:
+            return HttpResponseForbidden("两次输入的密码不一致.")
+        if not re.match("^\w+$", new_password):
+            return HttpResponseForbidden("密码格式错误.")
+        if old_password == new_password:
+            return HttpResponseForbidden("新旧密码不能相同.")
+        # 校验密码
+        try:
+            response = request.user.check_password(old_password)  # True or False
+        except Exception as e:
+            log.error(e)
+            return HttpResponseForbidden("密码校验错误.")
+        if not response:
+            return HttpResponseForbidden("密码错误.")
+        # 修改密码
+        try:
+            request.user.set_password(new_password)
+            request.user.save()
+        except Exception as e:
+            log.error(e)
+            return HttpResponseForbidden("修改密码失败.")
+        # 退出登录
+        logout(request)
+        # 跳转到登录页面重新登录
+        response = redirect(reverse("users:login"))
+        response.delete_cookie("username")
+        return response

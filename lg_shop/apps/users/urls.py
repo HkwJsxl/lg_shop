@@ -15,4 +15,6 @@ urlpatterns = [
     path("addresses/<str:address_pk>/", views.AddressUpdateDestoryView.as_view(), name="address_update"),
     # 修改默认收获地址
     path("addresses/<str:default_id>/default/", views.AddressDefaultView.as_view(), name="address_default"),
+    # 修改密码
+    path("password/change/", views.ChangePasswordView.as_view(), name="pass"),
 ]
