@@ -14,6 +14,7 @@ from .forms import RegisterForm, LoginForm
 from .models import UserInfo, Address
 from response_code import RETCODE, err_msg
 from authenticate import LoginRequiredJSONMixin
+from constants import USER_ADDRESS_COUNT
 
 
 class RegisterView(View):
@@ -112,13 +113,38 @@ class AddressView(LoginRequiredMixin, View):
     """收货地址"""
 
     def get(self, request):
-        return render(request, "user_center_site.html")
+        address_queryset = Address.objects.filter(user=request.user, is_deleted=False)
+        address_dict = [
+            {
+                "id": address.id,
+                "receiver": address.receiver,
+                "province": address.province.name,
+                "city": address.city.name,
+                "district": address.district.name,
+                "place": address.place,
+                "tel": address.tel,
+                "mobile": address.mobile,
+                "email": address.email,
+            }
+            for address in address_queryset
+        ]
+        default_address_id = request.user.default_address.id if request.user.default_address else None
+        context = {
+            "addresses": address_dict,
+            "default_address_id": default_address_id,
+            "address_count": USER_ADDRESS_COUNT,
+        }
+        return render(request, "user_center_site.html", context=context)
 
 
 class AddressCreateView(LoginRequiredJSONMixin, View):
     """新增地址"""
 
     def post(self, request):
+        # 判断用户地址数量是否超出
+        count = Address.objects.filter(user=request.user).count()
+        if count >= USER_ADDRESS_COUNT:
+            return HttpResponseForbidden('地址数量已超出.')
         # 获取数据
         data = request.body.decode()
         data = json.loads(data)
@@ -132,33 +158,37 @@ class AddressCreateView(LoginRequiredJSONMixin, View):
         email = data.get('email')
         # 校验参数
         if not all([receiver, province_id, city_id, district_id, place, mobile]):
-            return HttpResponseForbidden('缺少必传参数')
+            return HttpResponseForbidden('缺少必传参数.')
         if not re.match(r'^1[3-9]\d{9}$', mobile):
-            return HttpResponseForbidden('参数mobile有误')
+            return HttpResponseForbidden('参数mobile有误.')
         if tel:
             if not re.match(r'^(0[0-9]{2,3}-)?([2-9][0-9]{6,7})+(-[0-9]{1,4})?$', tel):
-                return HttpResponseForbidden('参数tel有误')
+                return HttpResponseForbidden('参数tel有误.')
         if email:
             if not re.match(r'^[a-z0-9][\w\.\-]*@[a-z0-9\-]+(\.[a-z]{2,5}){1,2}$', email):
-                return HttpResponseForbidden('参数email有误')
+                return HttpResponseForbidden('参数email有误.')
         # 保存数据
         try:
-            Address.objects.create(
+            address = Address.objects.create(
                 user=request.user,
                 receiver=receiver, province_id=province_id, city_id=city_id, district_id=district_id,
                 place=place, tel=tel, mobile=mobile, email=email
             )
+            # 设置默认的收货地址
+            if not request.user.default_address:
+                request.user.default_address = address
+                request.user.save()
         except:
             return JsonResponse({"code": RETCODE.DBERR, "msg": "数据创建失败."})
         # 返回数据
         address_dict = {
-            "receiver": receiver,
-            "province_id": province_id,
-            "city_id": city_id,
-            "district_id": district_id,
-            "place": place,
-            "tel": tel,
-            "mobile": mobile,
-            "email": email,
+            "receiver": address.receiver,
+            "province": address.province.name,
+            "city": address.city.name,
+            "district": address.district.name,
+            "place": address.place,
+            "tel": address.tel,
+            "mobile": address.mobile,
+            "email": address.email,
         }
         return JsonResponse({"code": RETCODE.OK, "msg": "成功", "address": address_dict})
