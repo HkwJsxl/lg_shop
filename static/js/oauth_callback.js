@@ -29,7 +29,7 @@ let vm = new Vue({
 		// 生成图形验证码
 		generate_image_code(){
 			this.uuid = generateUUID();
-			this.image_code_url = "/image_codes/" + this.uuid + "/";
+			this.image_code_url = "/api/verify/code/" + this.uuid + "/";
 		},
 		// 检查手机号
 		check_mobile(){
@@ -85,7 +85,7 @@ let vm = new Vue({
 			}
 
 			// 向后端接口发送请求，让后端发送短信验证码
-			let url = '/sms_codes/' + this.mobile + '/?image_code=' + this.image_code+'&uuid='+ this.uuid;
+			let url = '/api/verify/sms/' + this.mobile + '/?image_code=' + this.image_code+'&uuid='+ this.uuid;
 			axios.get(url, {
 				responseType: 'json'
 			})
@@ -107,10 +107,10 @@ let vm = new Vue({
 						}, 1000)
 					} else {
 						if (response.data.code == '4001') {
-							this.error_image_code_message = response.data.errmsg;
+							this.error_image_code_message = response.data.msg;
 							this.error_image_code = true;
                         } else { // 4002
-							this.error_sms_code_message = response.data.errmsg;
+							this.error_sms_code_message = response.data.msg;
 							this.error_sms_code = true;
 						}
 						this.sending_flag = false;

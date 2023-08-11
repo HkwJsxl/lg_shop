@@ -1,9 +1,7 @@
 from django.conf import settings
-from django.http import JsonResponse
 
 from authlib.jose import jwt, JoseError
 
-from response_code import RETCODE
 from users.models import UserInfo
 
 
@@ -44,3 +42,33 @@ def validate_token(token):
             return None
         else:
             return user
+
+
+def generate_access_token(openid):
+    """
+    加密函数
+    :param openid: 加密的数据
+    :return: 加密后的数据
+    """
+    # 签名算法
+    header = {'alg': 'HS256'}
+    # 待签名的数据负载
+    data = {"openid": openid}
+    # 生成token
+    token = jwt.encode(header=header, payload=data, key=settings.SECRET_KEY)
+    return token
+
+
+def check_access_token(openid):
+    """
+    校验authlib签名函数
+    :param openid: 加密后的token
+    :return: user对象或None
+    """
+    try:
+        data = jwt.decode(openid, settings.SECRET_KEY)
+    except JoseError:
+        return None
+    else:
+        # 拿到解密后的数据
+        return data.get("openid")

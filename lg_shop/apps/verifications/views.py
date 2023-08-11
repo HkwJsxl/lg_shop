@@ -20,18 +20,24 @@ from authlib_jwt import validate_token
 
 
 class CheckUserView(View):
+    """检查用户是否存在"""
+
     def get(self, request, username):
         count = UserInfo.objects.filter(username=username).count()
         return JsonResponse({"code": 0, "messages": "成功", "count": count})
 
 
 class CheckMobileView(View):
+    """检查手机号是否存在"""
+
     def get(self, request, mobile):
         count = UserInfo.objects.filter(mobile=mobile).count()
         return JsonResponse({"code": 0, "messages": "成功", "count": count})
 
 
 class VerifyCodeView(View):
+    """生成图片验证码"""
+
     def get(self, request, uuid):
         # 生成图片
         text, image = captcha.generate_captcha()
@@ -44,6 +50,8 @@ class VerifyCodeView(View):
 
 
 class SMSCodeView(View):
+    """校验验证码"""
+
     def get(self, request, mobile):
         # 接受校验参数
         uuid = request.GET.get("uuid")

@@ -240,3 +240,8 @@ EMAIL_FROM = 'lgShop-<hankewei0224@163.com>'  # 发件人抬头
 EMAIL_VERIFY_URL = "http://127.0.0.1:8000/api/verify/email/verification/"
 # 邮箱验证失效时间：秒
 EMAIL_VERIFY_TOKEN_EXPIRES = 60 * 30
+
+# QQ登录相关
+QQ_CLIENT_ID = '102060113'
+QQ_CLIENT_SECRET = 'iLpDPSIyVp01sVvF'
+QQ_REDIRECT_URI = 'http://127.0.0.1/api/oauth/qq/callback/'

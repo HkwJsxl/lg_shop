@@ -42,7 +42,7 @@ let vm = new Vue({
         // qq登录
         qq_login(){
             let next = get_query_string('next') || '/';
-            let url = '/qq/login/?next=' + next;
+            let url = '/api/oauth/qq/login/?next=' + next;
             axios.get(url, {
                 responseType: 'json'
             })

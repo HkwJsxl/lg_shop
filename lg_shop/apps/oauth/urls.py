@@ -1,7 +1,10 @@
-from django.urls import path, re_path
+from django.urls import path
 from . import views
 
 urlpatterns = [
-    # path("register/", views.RegisterView.as_view(), name="register"),
+    # qq登录地址
+    path("qq/login/", views.OAuthQQUrlView.as_view()),
+    # qq回调地址
+    path("qq/callback/", views.OAuthQQCallbacklView.as_view()),
 
 ]
