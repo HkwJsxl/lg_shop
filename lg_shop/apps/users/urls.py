@@ -2,8 +2,11 @@ from django.urls import path, re_path
 from . import views
 
 urlpatterns = [
+    # 注册
     path("register/", views.RegisterView.as_view(), name="register"),
+    # 登录
     path("login/", views.LoginView.as_view(), name="login"),
+    # 退出登录
     path("logout/", views.LogoutView.as_view(), name="logout"),
     # 个人中心
     path("info/", views.UserInfoView.as_view(), name="info"),

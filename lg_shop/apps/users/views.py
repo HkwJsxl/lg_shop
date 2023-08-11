@@ -46,7 +46,9 @@ class RegisterView(View):
             login(request, user)
             # 删除短信验证码
             redis_conn.delete(f"sms_code_{mobile}")
-            return redirect(reverse("contents:index"))
+            response = redirect(reverse("contents:index"))
+            response.set_cookie("username", user.username, settings.SESSION_COOKIE_AGE)
+            return response
         except Exception as e:
             return render(request, "register.html", {"return_msg": f"注册失败-{e}"})
 
