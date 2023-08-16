@@ -4,10 +4,10 @@ services:
     image: nginx:1.23.3
     restart: always
     ports:
-      - "8888:80"
+      - "80:80"
     container_name: "nginx"
     volumes:
-      - ./lg_shop/static:/home/lg_shop/static
+      - ./static:/home/lg_shop/static
       - ./conf/nginx/web.conf:/etc/nginx/conf.d/nginx.conf
     networks:
       - default
@@ -20,9 +20,9 @@ services:
       - default
     environment:
       - "MYSQL_ROOT_PASSWORD=root123456"
-      - "MYSQL_USER=fs"
+      - "MYSQL_USER=lg_shop"
       - "MYSQL_PASSWORD=root123456"
-      - "MYSQL_DATABASE=fs"
+      - "MYSQL_DATABASE=lg_shop"
       - "TZ=Asia/Shanghai"
     command:
       --default-authentication-plugin=mysql_native_password
@@ -30,7 +30,7 @@ services:
       --collation-server=utf8mb4_general_ci
       --explicit_defaults_for_timestamp=true
     ports:
-      - 8889:3306
+      - "3306:3306"
     volumes:
       - ./data/mysql:/var/lib/mysql
       - ./logs/mysql:/logs
@@ -41,33 +41,34 @@ services:
     networks:
       - default
     ports:
-      - "9000:6379"
+      - "6379:6379"
     command:
-      ["redis-server", "/usr/local/etc/redis/redis.conf"]
+      [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
     container_name: "redis_master"
     volumes:
       - ./conf/redis/master.conf:/usr/local/etc/redis/redis.conf
       - ./data/redis/master:/data
 
-  api_lg:
-    build: .
+  lg_shop:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
     image: lg_shop:1.0.0
-    container_name: api_lg
+    container_name: lg_shop
     restart: always
     ports:
-      - 7777:8000
+      - "8000:8000"
     networks:
       - default
     volumes:
-      - ./lg_shop:/lg_shop
-    command: >
-      sh -c "supervisord -c script/supervisord.conf && uwsgi --socket :7777 --workers 4 --master --enable-threads --module lg_shop.wsgi"
+      - .:/lg_shop
     environment:
       - "DJANGO_SETTINGS_MODULE=lg_shop.settings.dev"
       - "C_FORCE_ROOT=1"
       - "MYSQL_PASSWORD=root123456"
       - "REDIS_PASSWORD=root123456"
       - "RONGLIANYUNACCTOKEN=b6c417ddecb64f899a0a48e30c97b55d"
+    command: bash -c "python manage.py migrate && python manage.py collectstatic --noinput && supervisord -c script/supervisord.conf && uwsgi --socket :8000 --workers 4 --master --enable-threads --module lg_shop.wsgi"
     depends_on:
       - mysql_master
       - redis_master

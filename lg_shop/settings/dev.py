@@ -15,10 +15,17 @@ SECRET_KEY = 'django-insecure-*r2+i*-_*dz*)_as710e^c$r#!z355z70h2_@%ckkqv&-^c#y9
 DEBUG = True
 ALLOWED_HOSTS = []
 
+DNS_NAME = "127.0.0.1"
+# DNS_NAME = "www.lg.hkwpro.com"
+
 # redis相关
-REDIS_PASSWORD = "root123456"
-REDIS_HOST = "127.0.0.1"
+REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD")
+REDIS_HOST = DNS_NAME
 REDIS_PORT = 6379
+# mysql相关
+MYSQL_PASSWORD = os.environ.get("MYSQL_PASSWORD")
+MYSQL_HOST = DNS_NAME
+MYSQL_PORT = 3306
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -69,10 +76,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': "lg_shop",
-        'HOST': "localhost",
-        'POST': "3306",
+        'HOST': "%s" % MYSQL_HOST,
+        'PORT': "%s" % MYSQL_PORT,
         'USER': "lg_shop",
-        'PASSWORD': "root123456",
+        'PASSWORD': MYSQL_PASSWORD,
         'OPTIONS': {
             'charset': 'utf8mb4',  # 连接选项配置,mysql8.0以上无需配置
         },
@@ -82,6 +89,7 @@ DATABASES = {
         }
     }
 }
+
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
@@ -140,6 +148,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR.parent, "static")
 ]
+# STATIC_ROOT = os.path.join(BASE_DIR.parent, "static")
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -237,11 +246,11 @@ EMAIL_HOST_USER = 'hankewei0224@163.com'  # 授权的邮箱
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")  # 邮箱授权时获得的密码，非注册登录密码
 EMAIL_FROM = 'lgShop-<hankewei0224@163.com>'  # 发件人抬头
 # 邮箱激活链接
-EMAIL_VERIFY_URL = "http://127.0.0.1:8000/api/verify/email/verification/"
+EMAIL_VERIFY_URL = "http://%s:8000/api/verify/email/verification/" % DNS_NAME
 # 邮箱验证失效时间：秒
 EMAIL_VERIFY_TOKEN_EXPIRES = 60 * 30
 
 # QQ登录相关
 QQ_CLIENT_ID = '102060113'
 QQ_CLIENT_SECRET = 'iLpDPSIyVp01sVvF'
-QQ_REDIRECT_URI = 'http://127.0.0.1/api/oauth/qq/callback/'
+QQ_REDIRECT_URI = 'http://%s/api/oauth/qq/callback/' % DNS_NAME
