@@ -13,7 +13,7 @@ sys.path.insert(1, os.path.join(BASE_DIR, 'libs'))
 SECRET_KEY = 'django-insecure-*r2+i*-_*dz*)_as710e^c$r#!z355z70h2_@%ckkqv&-^c#y9'
 
 DEBUG = False
-ALLOWED_HOSTS = ["*", ]
+ALLOWED_HOSTS = ["*",]
 
 DNS_NAME = "127.0.0.1"
 # DNS_NAME = "www.lg.hkwpro.com"

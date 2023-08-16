@@ -34,6 +34,7 @@ services:
     volumes:
       - ./data/mysql:/var/lib/mysql
       - ./logs/mysql:/logs
+      - ./conf/mysql/my.cnf:/etc/mysql/my.cnf
 
   redis_master:
     image: redis:7
