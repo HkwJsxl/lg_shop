@@ -242,4 +242,4 @@ EMAIL_VERIFY_TOKEN_EXPIRES = 60 * 30
 # QQ登录相关
 QQ_CLIENT_ID = '102060113'
 QQ_CLIENT_SECRET = 'iLpDPSIyVp01sVvF'
-QQ_REDIRECT_URI = 'http://%s/api/oauth/qq/callback/' % DNS_NAME
+QQ_REDIRECT_URI = 'http://www.lg.hkwpro.com/api/oauth/qq/callback'
