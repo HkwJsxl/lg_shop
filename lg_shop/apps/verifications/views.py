@@ -10,7 +10,7 @@ from django.conf import settings
 from django_redis import get_redis_connection
 
 from users.models import UserInfo
-from captcha import captcha
+from captcha import captcha, captcha2
 from response_code import RETCODE, err_msg
 from constants import SMS_CODE_EXPIRES, IMAGE_CODE_EXPIRES, SMS_FLAG_EXPIRES
 # from celeryapp.sms.tasks import send_sms_code
@@ -41,6 +41,7 @@ class VerifyCodeView(View):
     def get(self, request, uuid):
         # 生成图片
         text, image = captcha.generate_captcha()
+        # text, image = captcha2.create_image_code()
         # 获取redis链接
         redis_conn = get_redis_connection("verifications")
         # 设置redis缓存
