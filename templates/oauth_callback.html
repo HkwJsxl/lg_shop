@@ -55,14 +55,8 @@
                                    class="msg_input">
                             <a @click="send_sms_code" class="get_msg_code">[[ sms_code_tip ]]</a>
                             <span v-show="error_sms_code" class="error_tip">[[ error_sms_code_message ]]</span>
-                            {% if sms_code_errmsg %}
-                                <span class="error_tip">{{ sms_code_errmsg }}</span>
-                            {% endif %}
-                            {% if openid_errmsg %}
-                                <span class="error_tip">{{ openid_errmsg }}</span>
-                            {% endif %}
-                            {% if qq_login_errmsg %}
-                                <span class="error_tip">{{ qq_login_errmsg }}</span>
+                            {% if msg %}
+                                <span class="error_tip">{{ msg }}</span>
                             {% endif %}
                         </li>
 

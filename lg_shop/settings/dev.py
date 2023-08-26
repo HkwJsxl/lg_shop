@@ -16,7 +16,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 DNS_NAME = "127.0.0.1"
-# DNS_NAME = "www.lg.hkwpro.com"
+# DNS_NAME = "47.120.38.34"
 
 # redis相关
 REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD")

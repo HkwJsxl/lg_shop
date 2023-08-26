@@ -15,8 +15,8 @@ SECRET_KEY = 'django-insecure-*r2+i*-_*dz*)_as710e^c$r#!z355z70h2_@%ckkqv&-^c#y9
 DEBUG = False
 ALLOWED_HOSTS = ["*",]
 
-DNS_NAME = "127.0.0.1"
-# DNS_NAME = "www.lg.hkwpro.com"
+# DNS_NAME = "127.0.0.1"
+DNS_NAME = "47.120.38.34"
 
 # redis相关
 REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD")
@@ -74,8 +74,19 @@ WSGI_APPLICATION = 'lg_shop.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': "lg_shop",
+        'HOST': "%s" % MYSQL_HOST,
+        'PORT': "%s" % MYSQL_PORT,
+        'USER': "lg_shop",
+        'PASSWORD': MYSQL_PASSWORD,
+        'OPTIONS': {
+            'charset': 'utf8mb4',  # 连接选项配置,mysql8.0以上无需配置
+        },
+        'POOL_OPTIONS': {  # 连接池的配置信息
+            'POOL_SIZE': 10,  # 连接池默认创建的链接对象的数量
+            'MAX_OVERFLOW': 10  # 连接池默认创建的链接对象的最大数量
+        }
     }
 }
 
