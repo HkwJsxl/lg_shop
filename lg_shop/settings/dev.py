@@ -255,3 +255,15 @@ QQ_CLIENT_ID = '102060113'
 QQ_CLIENT_SECRET = 'iLpDPSIyVp01sVvF'
 QQ_REDIRECT_URI = 'http://www.lg.hkwpro.com/api/oauth/qq/callback'
 # QQ_REDIRECT_URI = 'http://%s/api/oauth/qq/callback/' % DNS_NAME
+
+# fastdfs
+FASTDFS_CONF = {
+	'host_tuple': ['47.120.38.34'],
+	'connect_timeout': 30,
+	'network_timeout': 60,
+	'timeout': 30,
+	'tracker_server': '47.120.38.34:22122',
+	'name': 'Tracker Pool',
+	'port': 22122,
+}
+
