@@ -14,7 +14,7 @@ rets = client.upload_by_filename(r"C:\Users\Administrator\Pictures\icon.jpg")
 print(rets)
 
 '''
-	上传成功后的返回值
+	# 上传成功后的返回值
     {
         "Group name": "group1",  # 组名
         "Remote file_id": "group1/M00/00/00/rBEAA2TsEjKAfxYVAAAP8lLos1M446.jpg",  # 文件索引，可用于下载
@@ -23,5 +23,7 @@ print(rets)
         "Uploaded size": "3.99KB",  # 文件大小
         "Storage IP": "47.120.38.34"  # Storage地址
     }
+    # 查看图片：地址+上面的Remote file_id
+    http://47.120.38.34:8888/group1/M00/00/00/rBEAA2TsEjKAfxYVAAAP8lLos1M446.jpg
 
 '''
