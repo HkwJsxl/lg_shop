@@ -4,9 +4,12 @@ from django.urls import path, include, re_path
 # from django.views.static import serve
 # from django.conf import settings
 
+from contents.views import GoIndexView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
 
+    path('', GoIndexView.as_view()),
     path('api/users/', include(('users.urls', 'users'), namespace='users')),
     path('api/contents/', include(('contents.urls', 'contents'), namespace='contents')),
     path('api/verify/', include(('verifications.urls', 'verifications'), namespace='verify')),

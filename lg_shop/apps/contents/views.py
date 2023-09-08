@@ -1,8 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, reverse
 from django.views import View
 
 from .utlis import get_categories
 from .models import ContentCategory, Content
+
+
+class GoIndexView(View):
+    def get(self, request):
+        return redirect(reverse("contents:index"))
 
 
 class IndexView(View):
