@@ -16,7 +16,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 DNS_NAME = "127.0.0.1"
-# DNS_NAME = "47.120.38.34"
+SERVER_NAME = "47.120.38.34"
 
 # redis相关
 REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD")
@@ -259,12 +259,13 @@ QQ_REDIRECT_URI = 'http://www.lg.hkwpro.com/api/oauth/qq/callback'
 
 # fastdfs
 FASTDFS_CONF = {
-	'host_tuple': ['47.120.38.34'],
-	'connect_timeout': 30,
-	'network_timeout': 60,
-	'timeout': 30,
-	'tracker_server': '47.120.38.34:22122',
-	'name': 'Tracker Pool',
-	'port': 22122,
+    'host_tuple': ['%s' % SERVER_NAME, ],
+    'connect_timeout': 30,
+    'network_timeout': 60,
+    'timeout': 30,
+    'tracker_server': '%s:22122' % SERVER_NAME,
+    'name': 'Tracker Pool',
+    'port': 22122,
 }
-
+DEFAULT_FILE_STORAGE = 'utils.fastdfs.fdfs_storage.FastDFSStorage'
+FDFS_BASE_URL = 'http://%s:8888/' % SERVER_NAME
