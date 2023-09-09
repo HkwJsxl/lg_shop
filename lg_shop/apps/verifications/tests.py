@@ -5,6 +5,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'lg_shop.settings.dev')
 from django.test import TestCase
 
 from django.conf import settings
+
 from fdfs_client.client import Fdfs_client
 
 # 加载配置文件
