@@ -267,5 +267,5 @@ FASTDFS_CONF = {
     'name': 'Tracker Pool',
     'port': 22122,
 }
-DEFAULT_FILE_STORAGE = 'utils.fastdfs.fdfs_storage.FastDFSStorage'
+DEFAULT_FILE_STORAGE = 'extension.fdfs_storage.FastDFSStorage'
 FDFS_BASE_URL = 'http://%s:8888/' % SERVER_NAME

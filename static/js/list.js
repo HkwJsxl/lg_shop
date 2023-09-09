@@ -18,7 +18,7 @@ let vm = new Vue({
     	// 获取热销商品数据
         get_hot_skus(){
             if (this.category_id) {
-                let url = '/hot/'+ this.category_id +'/';
+                let url = '/api/goods/hot/'+ this.category_id +'/';
                 axios.get(url, {
                     responseType: 'json'
                 })
